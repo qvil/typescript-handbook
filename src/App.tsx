@@ -1,6 +1,8 @@
 import * as React from "react";
 // import * as fs from "fs";
 import styled from "styled-components";
+// import MyComponent from "./components/MyComponent";
+import Store from "./store";
 import Octo from "./Octo";
 
 const RootConatiner = styled.div`
@@ -21,12 +23,19 @@ const List = styled.li`
 
 class App extends React.Component<any, any> {
   state = {
-    text: ""
+    text: "",
+    value: 0
   };
 
   _setText = (text: any) => () => {
     this.setState({ text });
   };
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.setState({ value: 2 });
+    }, 1000);
+  }
 
   public render() {
     const { _setText } = this;
@@ -36,27 +45,29 @@ class App extends React.Component<any, any> {
     // this.readFile("./Octo.ts");
 
     return (
-      <RootConatiner>
-        <CardContainer>
-          <h1>Typescript Handbook</h1>
-          <h2>Interfaces</h2>
-          <ul>
-            <List onClick={_setText("Hello")}>Extending Interfaces</List>
-          </ul>
-          <h2>Classes</h2>
-          <h3>Readonly modifier</h3>
-          <h4>Parameter properties</h4>
-          <ul>
-            <List onClick={_setText(octo.name)}>Extending Interfaces</List>
-          </ul>
-          <div>{}</div>
-        </CardContainer>
-        <CardContainer>
-          <h2>Code</h2>
-          <h2>Result</h2>
-          <div>{text}</div>
-        </CardContainer>
-      </RootConatiner>
+      <Store.Provider value={this.state.value}>
+        <RootConatiner>
+          <CardContainer>
+            <h1>Typescript Handbook</h1>
+            <h2>Interfaces</h2>
+            <ul>
+              <List onClick={_setText("Hello")}>Extending Interfaces</List>
+            </ul>
+            <h2>Classes</h2>
+            <h3>Readonly modifier</h3>
+            <h4>Parameter properties</h4>
+            <ul>
+              <List onClick={_setText(octo.name)}>Extending Interfaces</List>
+            </ul>
+            <div>{}</div>
+          </CardContainer>
+          <CardContainer>
+            <h2>Code</h2>
+            <h2>Result</h2>
+            <div>{text}</div>
+          </CardContainer>
+        </RootConatiner>
+      </Store.Provider>
     );
   }
 
