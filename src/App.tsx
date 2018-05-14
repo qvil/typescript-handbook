@@ -40,7 +40,7 @@ class App extends React.Component<any, any> {
   public render() {
     const { _setText } = this;
     const { text } = this.state;
-    const octo = new Octo("I'm Octo~");
+    const octo: Octo = new Octo("I'm Octo~");
 
     // this.readFile("./Octo.ts");
 
