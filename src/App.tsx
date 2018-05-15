@@ -1,34 +1,66 @@
 import * as React from "react";
 // import * as fs from "fs";
-import styled from "styled-components";
-// import MyComponent from "./components/MyComponent";
+import { RootConatiner, CardContainer, List } from "./components/App";
 import Store from "./store";
-import Octo from "./Octo";
-
-const RootConatiner = styled.div`
-  display: flex;
-`;
-
-const CardContainer = styled.div`
-  flex: 1;
-  padding: 10px;
-  margin: 10px;
-  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
-`;
-
-const List = styled.li`
-  cursor: pointer;
-`;
+import Octopus from "./lib/Octopus";
+import pickCard from "./lib/overloads";
 
 class App extends React.Component<any, any> {
   state = {
-    text: "",
+    code: "",
+    result: "",
     value: 0
   };
 
-  _setText = (text: any) => () => {
-    this.setState({ text });
+  _setResult = (result: any) => () => {
+    this.setState({ result });
+  };
+
+  _octopus = () => {
+    const octopus: Octopus = new Octopus("Awesome Octopus");
+    this.setState({ result: `Hi, I'm ${octopus.name}, My number of legs is ${octopus.numberOfLegs}` });
+  };
+
+  _overLoads = () => {
+    const myDeck = [
+      { suit: "diamonds", card: 2 },
+      { suit: "spades", card: 10 },
+      { suit: "hearts", card: 4 }
+    ];
+    const pickedCard1 = myDeck[pickCard(myDeck)];
+    const pickedCard2 = pickCard(15);
+
+    this.setState({
+      code: `
+        let suits = ["hearts", "spades", "clubs", "diamonds"];
+
+        function pickCard(x: {suit: string; card: number; }[]): number;
+        function pickCard(x: number): {suit: string; card: number; };
+        function pickCard(x): any {
+            // Check to see if we're working with an object/array
+            // if so, they gave us the deck and we'll pick the card
+            if (typeof x == "object") {
+                let pickedCard = Math.floor(Math.random() * x.length);
+                return pickedCard;
+            }
+            // Otherwise just let them pick the card
+            else if (typeof x == "number") {
+                let pickedSuit = Math.floor(x / 13);
+                return { suit: suits[pickedSuit], card: x % 13 };
+            }
+        }
+
+        let myDeck = [{ suit: "diamonds", card: 2 }, { suit: "spades", card: 10 }, { suit: "hearts", card: 4 }];
+        let pickedCard1 = myDeck[pickCard(myDeck)];
+        alert("card: " + pickedCard1.card + " of " + pickedCard1.suit);
+
+        let pickedCard2 = pickCard(15);
+        alert("card: " + pickedCard2.card + " of " + pickedCard2.suit);
+      `,
+      result: `
+        pickedCard1 : ${pickedCard1.card}, ${pickedCard1.suit}
+        pickedCard2 : ${pickedCard2.card}, ${pickedCard2.suit}`
+    });
   };
 
   componentDidMount() {
@@ -38,12 +70,10 @@ class App extends React.Component<any, any> {
   }
 
   public render() {
-    const { _setText } = this;
-    const { text } = this.state;
-    const octo: Octo = new Octo("I'm Octo~");
+    const { _setResult } = this;
+    const { code, result } = this.state;
 
     // this.readFile("./Octo.ts");
-
     return (
       <Store.Provider value={this.state.value}>
         <RootConatiner>
@@ -51,20 +81,23 @@ class App extends React.Component<any, any> {
             <h1>Typescript Handbook</h1>
             <h2>Interfaces</h2>
             <ul>
-              <List onClick={_setText("Hello")}>Extending Interfaces</List>
+              <List onClick={_setResult("Hello")}>Extending Interfaces</List>
             </ul>
             <h2>Classes</h2>
             <h3>Readonly modifier</h3>
-            <h4>Parameter properties</h4>
             <ul>
-              <List onClick={_setText(octo.name)}>Extending Interfaces</List>
+              <List onClick={this._octopus}>Parameter properties</List>
             </ul>
-            <div>{}</div>
+            <h2>Functions</h2>
+            <ul>
+              <List onClick={this._overLoads}>Overloads</List>
+            </ul>
           </CardContainer>
           <CardContainer>
-            <h2>Code</h2>
-            <h2>Result</h2>
-            <div>{text}</div>
+            <h1>Code</h1>
+            <div>{code}</div>
+            <h1>Result</h1>
+            <div>{result}</div>
           </CardContainer>
         </RootConatiner>
       </Store.Provider>

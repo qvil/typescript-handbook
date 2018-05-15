@@ -9,6 +9,8 @@
     "no-empty": false,
     "no-console": false,
     "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"],
-    "ordered-imports": false
+    "ordered-imports": false,
+    "only-arrow-functions": false,
+    "array-type": false
   }
 }
